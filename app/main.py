@@ -1,4 +1,7 @@
+
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -39,11 +42,7 @@ class JDMatchRequest(BaseModel):
 
 @app.get("/")
 def root():
-    return {
-        "message": "SkillGraph API is running",
-        "status": "success"
-    }
-
+    return FileResponse("frontend/index.html")
 
 # =====================================================
 # HEALTH
@@ -419,3 +418,13 @@ def get_recommendations():
             status_code=503,
             detail=f"Unable to generate recommendations: {str(e)}"
         )
+        
+# =====================================================
+# FRONTEND
+# =====================================================
+
+app.mount(
+    "/",
+    StaticFiles(directory="frontend", html=True),
+    name="frontend"
+)
