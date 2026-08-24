@@ -6,7 +6,7 @@ It models candidates, skills, projects, technologies, certifications, and job de
 
 ## 🚀 Live Demo
 
-**Hosted Application:** `PASTE_YOUR_RENDER_URL_HERE`
+**Hosted Application:** https://wexa-cognodb-skillgraph.onrender.com/
 
 **GitHub Repository:** https://github.com/PremShaw143/Wexa-Cognodb-Skillgraph
 
