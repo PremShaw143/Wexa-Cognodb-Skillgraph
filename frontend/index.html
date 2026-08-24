@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>SkillGraph | Career Intelligence</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- =========================================================
+     NAVBAR
+========================================================= -->
+
+<header class="navbar">
+    <div class="container nav-inner">
+
+        <a href="#overview" class="logo">
+            Skill<span>Graph</span>
+        </a>
+
+        <nav>
+            <a href="#overview">Overview</a>
+            <a href="#skills">Skills</a>
+            <a href="#jobs">Jobs</a>
+            <a href="#projects">Projects</a>
+            <a href="#job-descriptions">Job Descriptions</a>
+            <a href="#recommendations">Recommendations</a>
+        </nav>
+
+        <div class="connection-status">
+            <span class="status-dot"></span>
+            <span id="connectionText">Checking...</span>
+        </div>
+
+    </div>
+</header>
+
+
+<main>
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+
+<section id="overview" class="hero">
+
+    <div class="container hero-grid">
+
+        <div class="hero-content">
+
+            <p class="eyebrow">
+                COGNODB • GRAPH DATABASE
+            </p>
+
+            <h1>
+                Explore your career
+                <span>through connections.</span>
+            </h1>
+
+            <p class="hero-description">
+                SkillGraph connects people, skills, projects, jobs and
+                companies using a graph database to identify meaningful
+                career opportunities based on relationships between data.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="#recommendations"
+                   class="btn btn-primary">
+                    View Recommendations
+                </a>
+
+                <a href="#job-descriptions"
+                   class="btn btn-secondary">
+                    Match a JD
+                </a>
+
+            </div>
+
+            <div class="tech-stack">
+                <span>FastAPI</span>
+                <span>CognoDB</span>
+                <span>Neo4j Driver</span>
+                <span>OpenCypher</span>
+            </div>
+
+        </div>
+
+
+        <!-- PROFILE -->
+
+        <div class="profile-card">
+
+            <div class="profile-avatar">
+                PK
+            </div>
+
+            <h2>
+                Prem Kumar Shaw
+            </h2>
+
+            <p class="profile-role">
+                AI / ML • Python • Backend
+            </p>
+
+            <div class="profile-label">
+                PROFILE
+            </div>
+
+            <h3>
+                Software & AI Engineering
+            </h3>
+
+            <div class="profile-skills">
+
+                <span>Python</span>
+                <span>Machine Learning</span>
+                <span>FastAPI</span>
+                <span>SQL</span>
+                <span>RAG</span>
+                <span>LLMs</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     STATS
+========================================================= -->
+
+<section class="stats-section">
+
+    <div class="container stats-grid">
+
+        <div class="stat-card">
+
+            <strong id="skillCount">
+                —
+            </strong>
+
+            <span>
+                SKILLS
+            </span>
+
+            <small>
+                Technical capabilities
+            </small>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <strong id="jobCount">
+                —
+            </strong>
+
+            <span>
+                JOBS
+            </span>
+
+            <small>
+                Career opportunities
+            </small>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <strong id="projectCount">
+                —
+            </strong>
+
+            <span>
+                PROJECTS
+            </span>
+
+            <small>
+                Demonstrated experience
+            </small>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <strong id="matchCount">
+                —
+            </strong>
+
+            <span>
+                MATCHES
+            </span>
+
+            <small>
+                Recommended roles
+            </small>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     SKILLS
+========================================================= -->
+
+<section id="skills" class="section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                01 • SKILLS
+            </p>
+
+            <h2>
+                Technical capabilities
+            </h2>
+
+            <p>
+                Skills stored in the graph and connected to people,
+                projects and job requirements.
+            </p>
+
+        </div>
+
+
+        <div id="skillsContainer"
+             class="skills-container">
+
+            <div class="loading">
+                Loading skills...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     JOBS
+========================================================= -->
+
+<section id="jobs"
+         class="section section-alt">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                02 • JOBS
+            </p>
+
+            <h2>
+                Career opportunities
+            </h2>
+
+            <p>
+                Explore roles and companies connected through
+                the SkillGraph.
+            </p>
+
+        </div>
+
+
+        <div id="jobsContainer"
+             class="jobs-grid">
+
+            <div class="loading">
+                Loading jobs...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     PROJECTS
+========================================================= -->
+
+<section id="projects"
+         class="section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                03 • PROJECTS
+            </p>
+
+            <h2>
+                Demonstrated experience
+            </h2>
+
+            <p>
+                Projects connected to the skills and technologies
+                used to build them.
+            </p>
+
+        </div>
+
+
+        <div id="projectsContainer"
+             class="projects-grid">
+
+            <div class="loading">
+                Loading projects...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     JOB DESCRIPTION MATCHING
+========================================================= -->
+ 
+<section id="job-descriptions" class="section section-alt">
+
+    <div class="container">
+
+        <div class="section-heading">
+            <p class="section-label">04 • JOB DESCRIPTION MATCHING</p>
+
+            <h2>Find the best candidates</h2>
+
+            <p>
+                Select a job description and SkillGraph will compare
+                its required skills against candidate skills stored in the graph.
+            </p>
+        </div>
+
+        <div class="jd-matching-card">
+
+            <div class="jd-header">
+                <span class="section-label">COMPANY RECRUITMENT</span>
+
+                <h3>Select a Job Description</h3>
+
+                <p>
+                    Match multiple candidates against the same JD
+                    and rank them by skill compatibility.
+                </p>
+            </div>
+
+            <div class="jd-form">
+
+                <label for="jdSelect">
+                    Job Description
+                </label>
+
+                <select id="jdSelect">
+                    <option value="">
+                        Select a job description
+                    </option>
+                </select>
+
+                <button
+                    type="button"
+                    id="matchJdButton"
+                    class="btn btn-primary">
+                    Find Matching Candidates
+                </button>
+
+            </div>
+
+            <div id="jdResults">
+
+                <div class="empty-message">
+
+                    <span>JD</span>
+
+                    <h3>Select a JD to start matching</h3>
+
+                    <p>
+                        SkillGraph will analyze the required skills
+                        and compare them with candidate profiles.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     RECOMMENDATIONS
+========================================================= -->
+
+<section id="recommendations"
+         class="section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                05 • RECOMMENDATIONS
+            </p>
+
+            <h2>
+                Best career matches
+            </h2>
+
+            <p>
+                Discover jobs ranked by how closely their required
+                skills match your profile.
+            </p>
+
+        </div>
+
+
+        <div id="recommendationsContainer"
+             class="recommendations-list">
+
+            <div class="loading">
+                Finding recommendations...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     WHY GRAPH
+========================================================= -->
+
+<section class="section graph-section">
+
+    <div class="container">
+
+        <div class="section-heading">
+
+            <p class="section-label">
+                06 • WHY GRAPH?
+            </p>
+
+            <h2>
+                Connections matter.
+            </h2>
+
+            <p>
+                A graph database makes relationship-driven questions
+                natural instead of requiring complex relational joins.
+            </p>
+
+        </div>
+
+
+        <!-- GRAPH FLOW -->
+
+        <div class="graph-flow">
+
+
+            <div class="graph-node">
+
+                <div class="node-icon">
+                    P
+                </div>
+
+                <span>
+                    PERSON
+                </span>
+
+                <strong>
+                    Prem Kumar Shaw
+                </strong>
+
+            </div>
+
+
+            <div class="graph-arrow">
+
+                <small>
+                    HAS_SKILL
+                </small>
+
+                →
+
+            </div>
+
+
+            <div class="graph-node">
+
+                <div class="node-icon">
+                    S
+                </div>
+
+                <span>
+                    SKILL
+                </span>
+
+                <strong>
+                    Python
+                </strong>
+
+            </div>
+
+
+            <div class="graph-arrow">
+
+                <small>
+                    REQUIRED_FOR
+                </small>
+
+                →
+
+            </div>
+
+
+            <div class="graph-node">
+
+                <div class="node-icon">
+                    J
+                </div>
+
+                <span>
+                    JOB
+                </span>
+
+                <strong>
+                    AI Engineer
+                </strong>
+
+            </div>
+
+
+            <div class="graph-arrow">
+
+                <small>
+                    AT
+                </small>
+
+                →
+
+            </div>
+
+
+            <div class="graph-node">
+
+                <div class="node-icon">
+                    C
+                </div>
+
+                <span>
+                    COMPANY
+                </span>
+
+                <strong>
+                    Data Systems Inc
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- WHY GRAPH -->
+
+        <div class="why-graph">
+
+            <h3>
+                Why use a graph database?
+            </h3>
+
+            <p>
+                SkillGraph models people, skills, projects, jobs and
+                companies as connected entities. Instead of treating
+                every record independently, the application traverses
+                relationships to discover meaningful career matches.
+            </p>
+
+
+            <div class="query-example">
+
+                <span>Person</span>
+
+                <b>→</b>
+
+                <span>HAS_SKILL</span>
+
+                <b>→</b>
+
+                <span>Skill</span>
+
+                <b>→</b>
+
+                <span>REQUIRED_FOR</span>
+
+                <b>→</b>
+
+                <span>Job</span>
+
+                <b>→</b>
+
+                <span>AT</span>
+
+                <b>→</b>
+
+                <span>Company</span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer>
+
+    <div class="container footer-inner">
+
+        <div>
+
+            <strong>
+                SkillGraph
+            </strong>
+
+            <span>
+                Graph-based career intelligence
+            </span>
+
+        </div>
+
+
+        <div>
+
+            Built with
+
+            <strong>
+                FastAPI
+            </strong>
+
+            •
+
+            <strong>
+                CognoDB
+            </strong>
+
+            •
+
+            <strong>
+                Neo4j Driver
+            </strong>
+
+        </div>
+
+
+        <div>
+            Wexa AI Take-Home Assignment
+        </div>
+
+    </div>
+
+</footer>
+
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script src="script.js"></script>
+
+</body>
+</html>
