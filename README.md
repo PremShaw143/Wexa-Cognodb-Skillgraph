@@ -621,5 +621,5 @@ Interested in:
 * Backend Development
 * Generative AI
 * Data Analytics
-
+Contact : premshaw117@gmail.com
 Built as part of the **Wexa AI — CognoDB Take-Home Assignment**.
