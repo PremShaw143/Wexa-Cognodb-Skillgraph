@@ -1,35 +1,100 @@
-# SkillGraph — Graph-Based Career Intelligence
+# SkillGraph — Graph-Based Candidate & Job Matching
 
-SkillGraph is a graph-based career intelligence application built for the **Wexa AI CognoDB Take-Home Assignment**.
+SkillGraph is a graph database application built with **FastAPI, CognoDB, Neo4j Python Driver, HTML, CSS, and JavaScript**.
 
-It uses **CognoDB**, **Neo4j Driver**, **OpenCypher**, and **FastAPI** to model relationships between people, skills, projects, technologies, certifications, job descriptions, and jobs.
+It models candidates, skills, projects, technologies, certifications, and job descriptions as connected graph data and uses **Cypher queries** to find relationships and calculate candidate-job matches.
 
-The application helps users:
+## 🚀 Live Demo
 
-* Explore technical skills
-* View projects and technologies
-* Explore available jobs
-* Match candidates against Job Descriptions
-* Get career recommendations based on skill compatibility
+**Hosted Application:** `PASTE_YOUR_RENDER_URL_HERE`
 
----
+**GitHub Repository:** https://github.com/PremShaw143/Wexa-Cognodb-Skillgraph
 
-## Tech Stack
+## ✨ Features
 
-* **Backend:** Python, FastAPI
-* **Database:** CognoDB Cloud
-* **Database Protocol:** Bolt
-* **Query Language:** OpenCypher
-* **Database Driver:** Official Neo4j Python Driver
-* **Frontend:** HTML, CSS, JavaScript
-* **Configuration:** Environment variables using `python-dotenv`
+* Candidate skill exploration
+* Project and technology relationships
+* Job description management
+* Candidate-job skill matching
+* Match score calculation
+* Skill and project recommendations
+* Multi-hop graph traversal
+* CognoDB health monitoring
+* REST API using FastAPI
+* Responsive web interface
+* Environment-based database configuration
+* Graceful database error handling
 
----
+## 🧩 Use Case
 
-## Project Structure
+The application demonstrates how graph databases can be used for **candidate skill analysis and job matching**.
+
+A candidate is connected to their skills, projects, technologies, and certifications. Job descriptions are connected to required skills.
+
+This allows the application to answer questions such as:
+
+* What skills does a candidate have?
+* Which projects demonstrate a particular skill?
+* Which technologies were used in a project?
+* What skills are shared across projects?
+* How well does a candidate match a job description?
+
+## 🕸️ Why a Graph Database?
+
+A graph database is useful because the important information is about **relationships**.
+
+For example:
 
 ```text
-Wexa_CognoDB_Assignment/
+Candidate
+   ↓ HAS_SKILL
+Skill
+   ↑ USES_SKILL
+Project
+   ↓ USES_TECH
+Technology
+```
+
+A relational database could store this information using multiple tables and junction tables. However, multi-hop relationship queries become more complex as the number of relationships grows.
+
+CognoDB makes these relationships explicit and allows them to be queried naturally using Cypher.
+
+## 🗂️ Graph Data Model
+
+```text
+(Person)
+   │
+   ├── HAS_SKILL ──> (Skill)
+   │
+   ├── WORKED_ON ──> (Project)
+   │                       │
+   │                       ├── USES_SKILL ──> (Skill)
+   │                       │
+   │                       └── USES_TECH ──> (Technology)
+   │
+   └── HAS_CERTIFICATION ──> (Certification)
+
+(JobDescription)
+   │
+   └── REQUIRES ──> (Skill)
+```
+
+## 🛠️ Technology Stack
+
+* **Backend:** Python, FastAPI
+* **Database:** CognoDB
+* **Database Protocol:** Bolt
+* **Database Driver:** Official Neo4j Python Driver
+* **Query Language:** openCypher
+* **Frontend:** HTML, CSS, JavaScript
+* **Configuration:** Python dotenv
+* **Hosting:** Render
+* **Version Control:** Git & GitHub
+
+## 📁 Project Structure
+
+```text
+Wexa-Cognodb-Skillgraph/
 │
 ├── app/
 │   ├── main.py
@@ -39,8 +104,8 @@ Wexa_CognoDB_Assignment/
 │
 ├── frontend/
 │   ├── index.html
-│   ├── style.css
-│   └── script.js
+│   ├── script.js
+│   └── style.css
 │
 ├── scripts/
 │   ├── seed_database.py
@@ -57,194 +122,148 @@ Wexa_CognoDB_Assignment/
 └── README.md
 ```
 
----
+## 🔍 Main Graph Queries
 
-# Use Case
+### Find Candidate Skills
 
-## Career Intelligence and Candidate Matching
-
-SkillGraph represents career-related information as a graph.
-
-For example:
-
-```text
-Person
-  │
-  ├── HAS_SKILL ──> Skill
-  │
-  ├── WORKED_ON ──> Project
-  │                     │
-  │                     ├── USES_SKILL ──> Skill
-  │                     │
-  │                     └── USES_TECH ──> Technology
-  │
-  └── HAS_CERTIFICATION ──> Certification
+```cypher
+MATCH (p:Person {name: $person_name})-[:HAS_SKILL]->(s:Skill)
+RETURN p.name AS person, s.name AS skill, s.category AS category
+ORDER BY s.name;
 ```
 
-Job matching is also represented through relationships:
+### Multi-Hop Traversal
 
-```text
-JobDescription
-      │
-   REQUIRES
-      ↓
-    Skill
+The application performs a two-hop traversal:
 
-Person
-   │
-HAS_SKILL
-   ↓
- Skill
+```cypher
+MATCH (p:Person {name: $person_name})
+      -[:WORKED_ON]->(project:Project)
+      -[:USES_SKILL]->(skill:Skill)
+RETURN p.name AS person,
+       project.name AS project,
+       skill.name AS skill;
 ```
 
-This allows SkillGraph to compare the skills required by a job with the skills owned by a candidate.
+This finds skills associated with projects worked on by a candidate.
 
----
+### Three-Hop Traversal
 
-# Why a Graph Database?
-
-Career data is naturally relationship-driven.
-
-A relational database could store people, skills, projects, and jobs in separate tables, but finding relationships across multiple entities can require several joins.
-
-With a graph database, these relationships can be traversed directly.
-
-For example:
-
-```text
-Person
- → Project
- → Skill
+```cypher
+MATCH (p:Person {name: $person_name})
+      -[:WORKED_ON]->(project:Project)
+      -[:USES_TECH]->(technology:Technology)
+RETURN p.name AS person,
+       project.name AS project,
+       technology.name AS technology;
 ```
 
-or:
+### Skill-Based Job Matching
+
+The application compares the required skills of a Job Description with the candidate's skills.
+
+The match score is calculated as:
 
 ```text
-Person
- → Project
- → Technology
+Match Score =
+(Matched Skills / Required Skills) × 100
 ```
 
-This makes multi-hop and relationship-based queries easier to express and understand.
-
-SkillGraph therefore uses CognoDB because the core problem is about **connections between entities**, not only individual records.
-
----
-
-# Graph Data Model
-
-## Main Nodes
-
-* `Person`
-* `Skill`
-* `Project`
-* `Technology`
-* `Certification`
-* `Job`
-* `Company`
-* `JobDescription`
-
-## Main Relationships
+For example, if a job requires four skills and the candidate has all four:
 
 ```text
-Person ──HAS_SKILL────────────> Skill
-
-Person ──WORKED_ON────────────> Project
-
-Project ──USES_SKILL──────────> Skill
-
-Project ──USES_TECH───────────> Technology
-
-Person ──HAS_CERTIFICATION───> Certification
-
-Job ──AT──────────────────────> Company
-
-Job ──REQUIRED_FOR────────────> Skill
-
-JobDescription ──REQUIRES─────> Skill
+4 / 4 × 100 = 100%
 ```
 
----
+## 🔐 Environment Variables
 
-# Example Graph
+Database credentials are never stored in the repository.
 
-```text
-Prem Kumar Shaw
-       │
-       │ HAS_SKILL
-       ↓
-    Python
-       ↑
-       │ REQUIRED_FOR
-       │
-   AI Engineer
-       │
-       │ AT
-       ↓
-   Company
+Create a `.env` file:
+
+```env
+COGNODB_URI=your_cognodb_uri
+COGNODB_USERNAME=cognodb
+COGNODB_PASSWORD=your_cognodb_password
 ```
 
-Another multi-hop relationship:
+The repository contains `.env.example` for reference.
 
-```text
-Prem Kumar Shaw
-       │
-   WORKED_ON
-       ↓
-AI Resume Screening Agent
-       │
-   USES_SKILL
-       ↓
-Machine Learning
+`.env` is excluded using `.gitignore`.
+
+## ⚙️ Local Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/PremShaw143/Wexa-Cognodb-Skillgraph.git
+cd Wexa-Cognodb-Skillgraph
 ```
 
----
+### 2. Create a virtual environment
 
-# Main Features
-
-## 1. Skills
-
-The application retrieves skills stored in CognoDB and displays them in the frontend.
-
-API:
-
-```text
-GET /skills
+```bash
+python -m venv venv
 ```
 
----
+### 3. Activate the environment
 
-## 2. Jobs
+Windows PowerShell:
 
-The application retrieves jobs and their associated companies.
-
-API:
-
-```text
-GET /jobs
+```powershell
+.\venv\Scripts\Activate.ps1
 ```
 
----
+### 4. Install dependencies
 
-## 3. Projects
-
-Projects are connected with their skills and technologies.
-
-API:
-
-```text
-GET /projects
+```bash
+pip install -r requirements.txt
 ```
 
----
+### 5. Configure environment variables
 
-## 4. Job Description Matching
+Create `.env` using `.env.example` and add your CognoDB credentials.
 
-Recruiters can select a Job Description and find candidates based on required skills.
+### 6. Seed the database
 
-Example:
+```bash
+python scripts/seed_database.py
+```
+
+Then load the job descriptions:
+
+```bash
+python scripts/seed_job_descriptions.py
+```
+
+### 7. Start the API
+
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+Open:
 
 ```text
+http://127.0.0.1:8000
+```
+
+## 🔌 API Endpoints
+
+| Method | Endpoint            | Purpose                      |
+| ------ | ------------------- | ---------------------------- |
+| GET    | `/`                 | API status                   |
+| GET    | `/health`           | Database health check        |
+| GET    | `/skills`           | Retrieve skills              |
+| GET    | `/jobs`             | Retrieve jobs                |
+| GET    | `/projects`         | Retrieve projects            |
+| GET    | `/job-descriptions` | Retrieve job descriptions    |
+| POST   | `/match-jd`         | Match candidate with a job   |
+| GET    | `/recommendations`  | Generate job recommendations |
+
+### Example
+
+```http
 POST /match-jd
 ```
 
@@ -256,296 +275,58 @@ Request:
 }
 ```
 
-The backend calculates:
+Response contains:
+
+```json
+{
+  "jd_id": "JD001",
+  "job_title": "AI Engineer",
+  "candidates": [
+    {
+      "candidate": "Prem Kumar Shaw",
+      "match_score": 100,
+      "matched_skills": [
+        "Python",
+        "Machine Learning",
+        "RAG",
+        "LLMs"
+      ]
+    }
+  ]
+}
+```
+
+## ☁️ Deployment
+
+The application is hosted on **Render**.
+
+Render configuration:
 
 ```text
-Match Score =
-Matched Skills / Required Skills × 100
-```
-
-For example:
-
-```text
-Required Skills: 4
-Matched Skills: 4
-
-Match Score: 100%
-```
-
----
-
-## 5. Career Recommendations
-
-The application compares the candidate's skills with job requirements and ranks jobs based on the percentage of required skills matched.
-
-API:
-
-```text
-GET /recommendations
-```
-
----
-
-# Graph Queries
-
-The project contains parameterized OpenCypher queries in:
-
-```text
-cypher/queries.cypher
-```
-
-Examples include:
-
-### Find a person's skills
-
-```cypher
-MATCH (p:Person {name: $person_name})
-      -[:HAS_SKILL]->(s:Skill)
-RETURN p.name AS person,
-       s.name AS skill
-ORDER BY s.name;
-```
-
-### Two-hop traversal
-
-```cypher
-MATCH (p:Person {name: $person_name})
-      -[:WORKED_ON]->(project:Project)
-      -[:USES_SKILL]->(skill:Skill)
-RETURN p.name AS person,
-       project.name AS project,
-       skill.name AS skill;
-```
-
-### Three-hop traversal
-
-```cypher
-MATCH (p:Person {name: $person_name})
-      -[:WORKED_ON]->(project:Project)
-      -[:USES_TECH]->(technology:Technology)
-RETURN p.name AS person,
-       project.name AS project,
-       technology.name AS technology;
-```
-
-All application queries use parameters rather than string-concatenated Cypher.
-
----
-
-# Seed Data
-
-Realistic project data is loaded using:
-
-```text
-scripts/seed_database.py
-```
-
-Job descriptions are loaded using:
-
-```text
-scripts/seed_job_descriptions.py
-```
-
-Example Job Descriptions:
-
-```text
-JD001 → AI Engineer
-JD002 → Backend Developer
-JD003 → Data Analyst
-```
-
-Example AI Engineer skills:
-
-```text
-Python
-Machine Learning
-RAG
-LLMs
-```
-
----
-
-# Environment Variables
-
-Database credentials are stored in `.env` and are **not committed to GitHub**.
-
-Required variables:
-
-```env
-COGNODB_URI=your_cognodb_uri
-COGNODB_USERNAME=cognodb
-COGNODB_PASSWORD=your_cognodb_password
-```
-
-A safe template is provided in:
-
-```text
-.env.example
-```
-
-The `.gitignore` file excludes:
-
-```text
-.env
-venv/
-__pycache__/
-*.pyc
-```
-
----
-
-# Setup
-
-## 1. Clone the Repository
-
-```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd Wexa_CognoDB_Assignment
-```
-
-## 2. Create Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-### Windows
-
-```powershell
-venv\Scripts\Activate.ps1
-```
-
-## 3. Install Dependencies
-
-```bash
+Build Command:
 pip install -r requirements.txt
+
+Start Command:
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
-## 4. Configure Environment
+CognoDB credentials are configured through Render Environment Variables.
 
-Create a `.env` file:
-
-```env
-COGNODB_URI=your_cognodb_uri
-COGNODB_USERNAME=cognodb
-COGNODB_PASSWORD=your_cognodb_password
-```
-
----
-
-# Database Setup
-
-Create a free CognoDB Cloud instance and obtain the Bolt connection URI and password.
-
-Then run the schema and seed scripts.
-
-The schema is available in:
+The application reads:
 
 ```text
-cypher/schema.cypher
+COGNODB_URI
+COGNODB_USERNAME
+COGNODB_PASSWORD
 ```
 
-Seed the main graph:
+No database credentials are committed to GitHub.
 
-```bash
-python scripts/seed_database.py
-```
+## 🩺 Health Check
 
-Seed Job Descriptions:
+The `/health` endpoint verifies the connection between the application and CognoDB.
 
-```bash
-python scripts/seed_job_descriptions.py
-```
-
----
-
-# Run the Application
-
-Start the FastAPI backend:
-
-```bash
-uvicorn app.main:app --reload
-```
-
-The API will be available at:
-
-```text
-http://127.0.0.1:8000
-```
-
-FastAPI documentation:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-Open the frontend:
-
-```text
-frontend/index.html
-```
-
-The frontend communicates with the FastAPI backend using REST APIs.
-
----
-
-# Application Flow
-
-```text
-Frontend
-   │
-   │ HTTP / REST API
-   ↓
-FastAPI Backend
-   │
-   │ Neo4j Driver
-   │ OpenCypher
-   ↓
-CognoDB
-   │
-   ↓
-Graph Data
-```
-
-For candidate matching:
-
-```text
-Frontend
-   ↓
-POST /match-jd
-   ↓
-FastAPI
-   ↓
-CognoDB
-   ↓
-JobDescription → Skill
-        +
-Person → Skill
-   ↓
-Skill Matching
-   ↓
-Match Score
-   ↓
-Frontend
-```
-
----
-
-# Error Handling
-
-The backend includes error handling for database and API failures.
-
-For example, if CognoDB is unavailable, the API returns an appropriate HTTP error instead of exposing the application failure directly.
-
-The frontend also displays loading, empty, and error states.
-
-Health check:
-
-```text
-GET /health
-```
-
-Example response:
+Example successful response:
 
 ```json
 {
@@ -554,72 +335,74 @@ Example response:
 }
 ```
 
----
+If CognoDB is unavailable, the API returns an appropriate `503` response instead of crashing silently.
 
-# Security
+## 📸 Screenshots
+
+### Dashboard
+
+Add your hosted application screenshot here:
+
+```text
+screenshots/dashboard.png
+```
+
+### Job Matching
+
+Add your job matching screenshot here:
+
+```text
+screenshots/job-matching.png
+```
+
+### Recommendations
+
+Add your recommendations screenshot here:
+
+```text
+screenshots/recommendations.png
+```
+
+## 🎥 Screen Recording
+
+Add your screen recording link here:
+
+```text
+PASTE_YOUR_SCREEN_RECORDING_LINK_HERE
+```
+
+The recording demonstrates:
+
+1. Opening the hosted application
+2. Exploring the application
+3. Selecting a Job Description
+4. Running candidate matching
+5. Viewing the match score
+6. Exploring graph-based relationships
+
+## 🔒 Security
 
 * Database credentials are stored in environment variables.
 * `.env` is excluded from Git.
-* Cypher queries use parameters.
-* No database password is stored in source code.
-* The frontend does not directly connect to CognoDB.
-* Database communication is handled by the FastAPI backend.
+* Parameterized Cypher queries are used.
+* No database password is included in the source code.
+* Database connection failures are handled gracefully.
+## 🚀 Live Demo
+
+**Hosted Application:** https://wexa-cognodb-skillgraph.onrender.com/
+
+**GitHub Repository:** https://github.com/PremShaw143/Wexa-Cognodb-Skillgraph
+
+## 👨‍💻 Author
+
+**Prem Kumar Shaw**
+
+B.Tech in Computer Science Engineering — Data Science
+
+Email: [premshaw117@gmail.com](mailto:premshaw117@gmail.com)
+
+GitHub: https://github.com/PremShaw143
 
 ---
 
-# Future Improvements
-
-Possible production improvements include:
-
-* User authentication and authorization
-* Recruiter and candidate accounts
-* Resume upload and automatic skill extraction
-* AI-powered job description parsing
-* More advanced graph-based recommendations
-* Skill-gap analysis
-* Job application tracking
-* Hosted production deployment
-* Automated tests and CI/CD
-
----
-
-# Assignment Deliverables
-
-This repository contains:
-
-* Complete FastAPI backend
-* Frontend application
-* CognoDB graph database integration
-* Seed scripts
-* OpenCypher queries
-* Graph schema
-* Parameterized database queries
-* Job Description matching
-* Career recommendations
-* Environment configuration template
-* README documentation
-
-Additional submission requirements:
-
-* **GitHub repository:** Add the final repository URL
-* **Hosted demo:** Add the deployed application URL
-* **Screen recording:** Add the recording link
-
----
-
-# Author
-
-## Prem Kumar Shaw
-
-**B.Tech Computer Science — Data Science**
-
-Interested in:
-
-* Artificial Intelligence
-* Machine Learning
-* Python
-* Backend Development
-* Generative AI
-* Data Analytics
-Contact : premshaw117@gmail.com
-Built as part of the **Wexa AI — CognoDB Take-Home Assignment**.
+Built as a take-home assignment for **Wexa AI — CognoDB Graph Database Application**.
